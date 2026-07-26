@@ -1,0 +1,67 @@
+GUIForge — static frontend
+==========================
+
+This folder is ready to upload to Cloudflare Pages (or Netlify, or any static
+host). Before it will work, it needs to know where your backend lives.
+
+GUIForge is not a self-contained static site. The Python backend supplies the
+widget library, generates the code, validates designs and builds exports. This
+folder is the interface to it.
+
+
+STEP 1 — Deploy the backend
+---------------------------
+Push the project to GitHub, then on render.com choose New -> Blueprint and pick
+the repository. It reads render.yaml and does the rest.
+
+You will end up with a URL like:  https://guiforge-abcd.onrender.com
+
+
+STEP 2 — Point this folder at it
+--------------------------------
+Open config.json (it sits next to index.html) and set apiBaseUrl:
+
+    {
+      "apiBaseUrl": "https://guiforge-abcd.onrender.com"
+    }
+
+Paste just the address — "/api" is appended automatically.
+
+
+STEP 3 — Allow this site to call the backend
+--------------------------------------------
+Browsers block cross-origin requests unless the server opts in. In the Render
+dashboard, under Environment, add:
+
+    GUIFORGE_ALLOWED_ORIGINS = https://your-site.pages.dev
+
+Use the exact address of this site, with https:// and no trailing slash. To
+allow several (a custom domain as well as the pages.dev one), separate them with
+commas.
+
+
+STEP 4 — Upload
+---------------
+In Cloudflare Pages: Create a project -> Upload assets -> drag this whole
+folder in.
+
+
+Changing the backend later
+--------------------------
+Edit config.json and upload that one file again. It is read at page load and is
+never cached, so the change takes effect immediately. No rebuild needed.
+
+
+If you see "No backend is configured"
+-------------------------------------
+config.json is missing or its apiBaseUrl is still empty. See step 2.
+
+If you see "Cannot reach the GUIForge backend"
+----------------------------------------------
+One of three things:
+  - the URL in config.json is wrong
+  - the backend is asleep (free Render instances take up to a minute to wake)
+  - this site's address is missing from GUIFORGE_ALLOWED_ORIGINS (step 3)
+
+Open your browser's developer console; a CORS error names the third case
+explicitly.

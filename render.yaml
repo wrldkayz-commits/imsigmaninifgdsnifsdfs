@@ -1,0 +1,33 @@
+# Render blueprint — one web service running the whole application.
+#
+# The build compiles the React frontend into `frontend/dist`, which the FastAPI
+# process then serves alongside `/api`. One service, one origin, no CORS.
+#
+# To deploy: push this repo to GitHub, then on render.com choose
+# "New +" -> "Blueprint" and point it at the repository.
+
+services:
+  - type: web
+    name: guiforge
+    runtime: python
+    plan: free
+    region: oregon
+
+    # Node is available in Render's Python image, so the frontend build runs
+    # here rather than needing a separate static service.
+    buildCommand: |
+      pip install -r backend/requirements.txt
+      cd frontend && npm ci && npm run build
+
+    startCommand: cd backend && uvicorn main:app --host 0.0.0.0 --port $PORT
+
+    healthCheckPath: /api/health
+
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.12.7"
+      - key: NODE_VERSION
+        value: "20.11.1"
+      # Absolute path, because the start command runs from ./backend.
+      - key: GUIFORGE_FRONTEND_DIST
+        value: /opt/render/project/src/frontend/dist

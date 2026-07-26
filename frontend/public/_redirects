@@ -1,0 +1,8 @@
+# Cloudflare Pages / Netlify SPA routing.
+#
+# GUIForge is a single-page app: it has no server to render /anything, so every
+# path must serve index.html and let the client take over. Without this rule a
+# refresh on any URL other than "/" returns a 404.
+#
+# The 200 (rather than 301) keeps the address bar unchanged.
+/*    /index.html   200

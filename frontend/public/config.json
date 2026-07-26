@@ -1,0 +1,4 @@
+{
+  "_comment": "Set apiBaseUrl to your backend's address, then re-upload this file. Leave it empty when the backend serves this page itself. You can paste just the origin (https://my-app.onrender.com) and /api is added for you.",
+  "apiBaseUrl": ""
+}
